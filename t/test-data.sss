@@ -1,0 +1,38 @@
+SSS
+VERSION 1.1
+  DATE "2011-08-23"
+  TIME "10:15"
+  ORIGIN "WrittenFromScratch v1"
+  SURVEY
+    TITLE "Test Survey"
+    RECORD A
+      VARIABLE 1
+        NAME "test1"
+        LABEL "test1"
+        TYPE CHARACTER
+        POSITION 1 TO 4
+        SIZE 4
+      END VARIABLE
+      VARIABLE 2
+        NAME "test2"
+        LABEL "test2"
+        TYPE SINGLE
+        POSITION 5
+        VALUES
+          1 "First"
+          2 "Second"
+          3 "Third"
+        END VALUES
+      END VARIABLE
+      VARIABLE 3
+        NAME "test3"
+        LABEL "test3"
+        TYPE QUANTITY
+        POSITION 6 TO 7
+        VALUES
+          1 TO 99
+        END VALUES
+      END VARIABLE
+    END RECORD
+  END SURVEY
+END SSS

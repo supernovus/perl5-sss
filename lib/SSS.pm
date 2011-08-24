@@ -423,13 +423,91 @@ sub load_recs
       }
       my $id     = $var->{id};
       my $name   = $var->{name};
-      $rec->{byname}->{$name} = {};
-      $rec->{byid}->{$id}     = {};
+      my $recspec = {};
+      $rec->{byname}->{$name} = $recspec;
+      $rec->{byid}->{$id}     = $recspec;
       ## Okay, let's get the value.
-      my $value = substr($line, $start, $length);
-      $rec->{byname}->{$name}->{value} = $value;
-      $rec->{byid}->{$id}->{value}     = $value;
-      ## TODO: process each TYPE properly, including text labels, MULTIPLE, etc.
+      my $rawvalue = substr($line, $start, $length);
+      $recspec->{rawvalue} = $rawvalue;
+      my $value = $rawvalue;
+      $value =~ s/^\s*//g; # strip leading whitespace.
+      $value =~ s/\s*$//g; # strip trailing whitespace.
+      $recspec->{value} = $value;
+
+      if ($var->{type} eq 'MULTIPLE')
+      { ## Okay, let's process multiples.
+        my $multiples = {};
+        my %cats = %{$var->{values}->{cats}};
+        my @catkeys = keys %cats;
+        my $catcount = scalar @catkeys;
+        my $reccount = length($rawvalue);
+        if (exists $var->{subfields})
+        { ## We're in SPREAD format.
+          my $subfields = $var->{subfields};
+          ## Okay, we're going to generate a cache of known values.
+          my @found;
+          my $width;
+          if (exists $var->{width})
+          {
+            $width = $var->{width};
+          }
+          else
+          {
+            if ($subfields == 1)
+            {
+              $width = 1;
+            }
+            else
+            {
+              $width = $reccount / $subfields;
+            }
+            $self->debug(3, "width: $width");
+          }
+          for (my $st = 0; $st <= $reccount - $width; $st += $width)
+          { ## Find our values.
+            my $inval = substr($rawvalue, $st, $width);
+            push @found, $inval;
+          }
+          ## Now let's set our data.
+          foreach my $key (@catkeys)
+          { ## Let's see if we are set.
+            my $subval = 0;
+            foreach my $found (@found)
+            { $self->debug(3, "Comparing $key to $found");
+              if ($found == $key)
+              {
+                $subval = 1;
+              }
+            }
+            $multiples->{$key} = {};
+            $multiples->{$key}->{value} = $subval;
+            $multiples->{$key}->{text}  = $cats{$key}->{text};
+          }
+        }
+        else
+        { ## We're in Bitstring format.
+          if ($reccount < $catcount)
+          { ## You can't have a field smaller than the number of values.
+            croak "Field size is smaller than values on variable $name";
+          }
+          foreach my $key (@catkeys)
+          { ## Let's get our subvalue.
+            my $start = $key - 1;
+            my $subval = substr($rawvalue, $start, 1);
+            $multiples->{$key} = {};
+            $multiples->{$key}->{value} = $subval;
+            $multiples->{$key}->{text}  = $cats{$key}->{text};
+          }
+        }
+        $recspec->{values} = $multiples;
+      }
+      else
+      { ## We're not a multiple, let's see if we have values.
+        if (exists $var->{values} && exists $var->{values}->{cats}->{$value})
+        {
+          $recspec->{text} = $var->{values}->{cats}->{$value}->{text};
+        }
+      }
     }
     push(@{$self->{recs}}, $rec);
   }
@@ -518,7 +596,8 @@ Perl 5.10 or higher
 
 =head1 BUGS AND LIMITATIONS
 
-None to report yet.
+This library is written with the assumption that the Formatting Recommendations
+in the specification have been followed, in particular recommendations 1 and 2.
 
 =head1 AUTHOR
 

@@ -8,14 +8,14 @@ VERSION 1.1
     RECORD A
       VARIABLE 1
         NAME "test1"
-        LABEL "test1"
+        LABEL "Test 1"
         TYPE CHARACTER
         POSITION 1 TO 4
         SIZE 4
       END VARIABLE
       VARIABLE 2
         NAME "test2"
-        LABEL "test2"
+        LABEL "Test 2"
         TYPE SINGLE
         POSITION 5
         VALUES
@@ -26,11 +26,48 @@ VERSION 1.1
       END VARIABLE
       VARIABLE 3
         NAME "test3"
-        LABEL "test3"
+        LABEL "Test 3"
         TYPE QUANTITY
         POSITION 6 TO 7
         VALUES
           1 TO 99
+        END VALUES
+      END VARIABLE
+      VARIABLE 4
+        NAME "test4"
+        LABEL "Test 4"
+        TYPE MULTIPLE
+        POSITION 9 TO 11
+        VALUES
+          1 "One"
+          2 "Two"
+          3 "Three"
+        END VALUES
+      END VARIABLE
+      VARIABLE 5
+        NAME "test5"
+        LABEL "Test 5"
+        TYPE MULTIPLE
+        POSITION 13 TO 16
+        SPREAD 2 OF 2
+        VALUES
+          1 "One"
+          5 "Five"
+          15 "Fifteen"
+          26 "Twenty Six"
+        END VALUES
+      END VARIABLE
+      VARIABLE 6
+        NAME "test6"
+        LABEL "Test 6"
+        TYPE MULTIPLE
+        POSITION 18 TO 22
+        SPREAD 1
+        VALUES
+          1 "One"
+          2 "Two"
+          3 "Three"
+          4 "Four"
         END VALUES
       END VARIABLE
     END RECORD

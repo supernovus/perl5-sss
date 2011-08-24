@@ -22,6 +22,8 @@ This library is specifically for the non-XML version 1.1
 
 package SSS;
 
+our $VERSION = v11.8.23;
+
 use v5.10;
 use strict;
 use warnings;

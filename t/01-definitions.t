@@ -11,7 +11,7 @@ BEGIN
   unshift @INC, './lib';
 }
 
-use SSS;
+use SSS v11.8.23; ## We need version 11.8.23 or newer.
 use Test::More;
 
 plan tests => 14;

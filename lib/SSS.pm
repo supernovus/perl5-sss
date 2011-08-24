@@ -453,14 +453,7 @@ sub load_recs
           }
           else
           {
-            if ($subfields == 1)
-            {
-              $width = 1;
-            }
-            else
-            {
-              $width = $reccount / $subfields;
-            }
+            $width = $reccount / $subfields;
             $self->debug(3, "width: $width");
           }
           for (my $st = 0; $st <= $reccount - $width; $st += $width)

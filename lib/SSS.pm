@@ -27,6 +27,16 @@ use strict;
 use warnings;
 use Carp;
 
+## Private function for reading files.
+##  my @lines = _slurp($filename);
+sub _slurp {
+  my $file = shift;
+  open (my $in, $file);
+  my @lines = <$in>;
+  close ($in);
+  return @lines;
+}
+
 ## Private method for debugging purposes.
 ##   $self->debug($level, $message);
 sub debug
@@ -72,11 +82,127 @@ sub new
   return $self;
 }
 
+=item get_vars_by_name()
+
+Returns a Hash Reference of definition variables, where the hash keys are the
+NAME field from the survey definition.
+
+  my $vars = $sss->get_vars_by_name();
+
+=cut 
+
+sub get_vars_by_name
+{
+  my ($self) = @_;
+  return $self->{defs}->{vars}->{byname};
+} 
+
+=item get_var_by_name($name)
+
+Returns a Hash Reference representing the variable with the given NAME field.
+
+  my $var = $sss->get_var_by_name($name);
+
+=cut
+
+sub get_var_by_name
+{
+  my ($self, $name) = @_;
+  if (!defined $name) { croak "Must specify a variable name in get_var_by_name()"; }
+  my $vars = $self->get_vars_by_name();
+  if (exists $vars->{$name})
+  {
+    return $vars->{$name};
+  }
+  else
+  {
+    carp "Attempt to get non-existent variable by name, '$name'.";
+    return;
+  }
+}
+
+=item get_vars_by_id()
+
+Returns a Hash Reference of definition variables, where the hash keys are the
+VARIABLE ID from the survey definition.
+
+  my $vars = $sss->get_vars_by_id();
+
+=cut
+
+sub get_vars_by_id
+{
+  my ($self) = @_;
+  return $self->{defs}->{vars}->{byid};
+}
+
+=item get_var_by_id()
+
+Return a Hash Reference representing the variable with the given VARIABLE ID.
+
+  my $var = $sss->get_var_by_id($id);
+
+=cut
+
+sub get_var_by_id
+{
+  my ($self, $id) = @_;
+  if (!defined $id) { croak "Must specify a variable id in get_var_by_id()"; }
+  my $vars = $self->get_vars_by_id();
+  if (exists $vars->{$id})
+  {
+    return $vars->{$id};
+  }
+  else
+  {
+    carp "Attempt to get non existent variable by id, '$id'.";
+    return;
+  }
+}
+
+=item get_vars()
+
+Returns an Array representing the variables, in the order they were defined.
+
+  my @vars = $sss->get_vars();
+
+=cut
+
+sub get_vars
+{
+  my ($self) = @_;
+  my @vars = @{$self->{defs}->{vars}->{ordered}};
+  my $varcount = scalar @vars;
+  if ($varcount < 1) { croak "No variables found, cannot continue."; }
+  return @vars;
+}
+
+=item get_field($fieldname)
+
+Return the top-level field if it was specified.
+
+  my $date = $sss->get_field('date');
+
+=cut
+
+sub get_field
+{
+  my ($self, $field) = @_;
+  if (!defined $field) { croak "You must specify a field to get in get_field()"; }
+  if (exists $self->{defs}->{$field})
+  {
+    return $self->{defs}->{$field};
+  }
+  return;
+}
+
 =item load_defs()
 
 Load a definition file (.sss extension)
 
   $sss->load_defs("survey.sss");
+
+Stores the definitions in an object member called defs.
 
 =cut
 
@@ -88,8 +214,7 @@ sub load_defs
   my @varkeys = ('name', 'label');
   my @types = ('SINGLE', 'MULTIPLE', 'QUANTITY', 'CHARACTER', 'LOGICAL');
   if (!$file || !-f $file) { croak "Missing or invalid definition file."; }
-  open (my $in, $file);
-  my @lines = <$in>;
+  my @lines = _slurp($file);
   $self->debug(2, "== Definitions ==");
   for my $line (@lines)
   {
@@ -232,8 +357,113 @@ sub load_recs
 {
   my ($self, $file) = @_;
   if (!$file || !-f $file) { croak "Missing or invalid records file."; }
-  ## TODO: implement me.
-  croak "Not implemented yet.";
+  my @defs = @{$self->{defs}->{vars}->{ordered}};
+  my $defcount = scalar @defs;
+  if ($defcount < 1) { croak "No definitions found, cannot continue."; }
+  my @lines = _slurp($file);
+  for my $line (@lines)
+  { ## First, let's store the raw record.
+    chomp($line);
+    my $rec =
+    {
+      raw     => $line,
+      byname  => {},
+      byid    => {},
+    };
+    ## Next, let's process our known definitions.
+    foreach my $var (@defs)
+    { 
+      my $start  = $var->{start}-1;
+      my $finish = $var->{finish};
+      my $length;
+      if ($start == $finish)
+      {
+        $length = 1;
+      }
+      else {
+        $length = $finish - $start;
+      }
+      my $id     = $var->{id};
+      my $name   = $var->{name};
+      $rec->{byname}->{$name} = {};
+      $rec->{byid}->{$id}     = {};
+      ## Okay, let's get the value.
+      my $value = substr($line, $start, $length);
+      $rec->{byname}->{$name}->{value} = $value;
+      $rec->{byid}->{$id}->{value}     = $value;
+      ## TODO: process each TYPE properly, including text labels, MULTIPLE, etc.
+    }
+    push(@{$self->{recs}}, $rec);
+  }
+}
+
+=item get_recs()
+
+Returns an Array representing the records.
+
+  my @recs = $sss->get_recs();
+
+=cut
+
+sub get_recs
+{
+  my ($self) = @_;
+  my @recs = @{$self->{recs}};
+  my $reccount = scalar @recs;
+  if ($reccount < 1) { croak "No records found, cannot continue."; }
+  return @recs;
+}
+
+=item get_recs_by_name()
+
+Returns an Array of Hash references representing the records, 
+where each hash key is the NAME field from the survey definitions.
+
+  my @recs = $sss->get_recs_by_name();
+  foreach my $rec (@recs)
+  {
+    my $cost = $rec->{cost}; ## a VARIABLE with a NAME of 'cost' must exist.
+    do_something_with($cost->{value});
+  }
+
+=cut
+
+sub get_recs_by_name
+{
+  my ($self) = @_;
+  my @recs = $self->get_recs();
+  my @return;
+  for my $rec (@recs)
+  { ## We are only interested in the name index.
+    push @return, $rec->{byname};
+  }
+  return @return;
+}
+
+=item get_recs_by_id()
+
+Returns an Array of Hash references representing the records,
+where each hash key is the VARIABLE ID from the survey definitions.
+
+  my @recs = $sss->get_recs_by_id();
+  foreach my $rec (@recs)
+  {
+    my $var15 = $rec->{15}; ## a VARIABLE with an ID of '15' must exist.
+    do_something_with($var15->{value});
+  }
+
+=cut
+
+sub get_recs_by_id
+{
+  my ($self) = @_;
+  my @recs = $self->get_recs();
+  my @return;
+  for my $rec (@recs)
+  { ## We are only interested in the id index.
+    push @return, $rec->{byid};
+  }
+  return @return;
 }
 
 =back

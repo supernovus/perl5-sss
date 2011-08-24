@@ -468,7 +468,8 @@ sub load_recs
           { ## Let's see if we are set.
             my $subval = 0;
             foreach my $found (@found)
-            { $self->debug(3, "Comparing $key to $found");
+            { if ($found =~ /^\s*$/) { next; } ## skip empty.
+              $self->debug(3, "Comparing $key to $found");
               if ($found == $key)
               {
                 $subval = 1;

@@ -82,6 +82,51 @@ sub new
   return $self;
 }
 
+=item add_var($hashref)
+
+Adds a new variable definition to the system. NOTE: This is meant for definitions
+not stored in the .sss file. Do not attempt to override existing definitions, or
+bad things will happen.
+
+  $def =
+  {
+    id      => 9999,
+    name    => 'uid',
+    label   => 'my label',
+    start   => 24,
+    finish  => 25,
+    type    => 'SINGLE',
+    values  =>
+    {
+      start  => 1,
+      finish => 99,
+      cats   =>
+      [
+        { 
+          1  => { text => "First" },
+          2  => { text => "Second" },
+          99 => { tex' => "Uknown", special => 1 },
+        }
+      ]
+    }
+  };
+  $sss->add_var($def);
+
+=cut
+
+sub add_var
+{
+  my ($self, $variable) = @_;
+  my $id = $variable->{id};
+  $self->{defs}->{vars}->{byid}->{$id} = $variable;
+  if (exists $variable->{name})
+  {
+    my $name = $variable->{name};
+    $self->{defs}->{vars}->{byname}->{$name} = $variable;
+  }
+  push(@{$self->{defs}->{vars}->{ordered}}, $variable);
+}
+
 =item get_vars_by_name()
 
 Returns a Hash Reference of definition variables, where the hash keys are the
@@ -308,14 +353,7 @@ sub load_defs
         when (/^\s*END\s*VARIABLE\s*$/i)
         { ## End a variable block.
           ## You can look them up by id, name, or an ordered array.
-          my $id = $variable->{id};
-          $self->{defs}->{vars}->{byid}->{$id} = $variable;
-          if (exists $variable->{name})
-          {
-            my $name = $variable->{name};
-            $self->{defs}->{vars}->{byname}->{$name} = $variable;
-          }
-          push(@{$self->{defs}->{vars}->{ordered}}, $variable);
+          $self->add_var($variable);
           undef($variable); ## Clear out the variable.
         }
       }

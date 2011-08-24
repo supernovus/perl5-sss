@@ -46,36 +46,36 @@ is $recs[1]->{test2}->{text}, 'Second', 'get variable text (2)'; #14
 is $recs[2]->{test2}->{text}, 'Third',  'get variable text (3)'; #15
 
 ## Okay, let's get some MULTIPLE records in Bitstring format.
-my $multi1 = $recs[0]->{test4}->{values};
+my $multi1 = $recs[0]->{test4}->{values}->{byid};
 is $multi1->{1}->{value}, 0, 'get bitstring MULTI (1)'; #16
 is $multi1->{2}->{value}, 0, 'get bitstring MULTI (2)'; #17
 is $multi1->{3}->{value}, 0, 'get bitstring MULTI (3)'; #18
-my $multi2 = $recs[1]->{test4}->{values};
+my $multi2 = $recs[1]->{test4}->{values}->{byid};
 is $multi2->{1}->{value}, 0, 'get bitstring MULTI (4)'; #19
 is $multi2->{2}->{value}, 1, 'get bitstring MULTI (5)'; #20
 is $multi2->{3}->{value}, 0, 'get bitstring MULTI (6)'; #21
-my $multi3 = $recs[2]->{test4}->{values};
-is $multi3->{1}->{value}, 0, 'get bitstring MULTI (7)'; #22
-is $multi3->{2}->{value}, 1, 'get bitstring MULTI (8)'; #23
-is $multi3->{3}->{value}, 1, 'get bitstring MULTI (9)'; #24
+my $multi3 = $recs[2]->{test4}->{values}->{ordered};
+is $multi3->[0]->{value}, 0, 'get ordered bitstring MULTI (1)'; #22
+is $multi3->[1]->{value}, 1, 'get ordered bitstring MULTI (2)'; #23
+is $multi3->[2]->{value}, 1, 'get ordered bitstring MULTI (3)'; #24
 
 ## Now, let's get some MULTIPLE records in SPREAD format.
-my $multi4 = $recs[0]->{test5}->{values};
+my $multi4 = $recs[0]->{test5}->{values}->{byid};
 is $multi4->{1}->{value}, 1, 'get SPREAD MULTI (1)'; #25
 is $multi4->{5}->{value}, 1, 'get SPREAD MULTI (2)'; #26
 is $multi4->{15}->{value}, 0, 'get SPREAD MULTI (3)'; #27
 is $multi4->{26}->{value}, 0, 'get SPREAD MULTI (4)'; #28
-my $multi5 = $recs[1]->{test5}->{values};
-is $multi5->{1}->{value}, 0, 'get SPREAD MULTI (5)'; #29
-is $multi5->{5}->{value}, 0, 'get SPREAD MULTI (6)'; #30
-is $multi5->{15}->{value}, 1, 'get SPREAD MULTI (7)'; #31
-is $multi5->{26}->{value}, 1, 'get SPREAD MULTI (8)'; #32
+my $multi5 = $recs[1]->{test5}->{values}->{ordered};
+is $multi5->[0]->{value}, 0, 'get ordered SPREAD MULTI (1)'; #29
+is $multi5->[1]->{value}, 0, 'get ordered SPREAD MULTI (2)'; #30
+is $multi5->[2]->{value}, 1, 'get ordered SPREAD MULTI (3)'; #31
+is $multi5->[3]->{value}, 1, 'get ordered SPREAD MULTI (4)'; #32
 
 ## And some MULTIPLE records in SPREAD format with implied width.
-my $multi6 = $recs[0]->{test6}->{values};
+my $multi6 = $recs[0]->{test6}->{values}->{byid};
 is $multi6->{1}->{value}, 0, 'get implicit SPREAD MULTI (1)'; #33
 is $multi6->{2}->{value}, 1, 'get implicit SPREAD MULTI (2)'; #34
-my $multi7 = $recs[1]->{test6}->{values};
-is $multi7->{1}->{value}, 1, 'get implicit SPREAD MULTI (3)'; #35
-is $multi7->{2}->{value}, 0, 'get implicit SPREAD MULTI (4)'; #36
+my $multi7 = $recs[1]->{test6}->{values}->{ordered};
+is $multi7->[0]->{value}, 1, 'get ordered implicit SPREAD MULTI (1)'; #35
+is $multi7->[1]->{value}, 0, 'get ordered implicit SPREAD MULTI (2)'; #36
 

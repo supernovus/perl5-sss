@@ -38,7 +38,7 @@ my $var2 = $sss->get_var_by_name('test2');
 ok defined $var2, 'get variable by name'; #7
 is $var2->{start}, 5, 'single position start'; #8
 is $var2->{finish}, 5, 'single position finish'; #9
-is $var2->{values}->{cats}->{1}->{text}, 'First', 'get value text'; #10
+is $var2->{values}->{cats}->{byid}->{1}->{text}, 'First', 'get value text'; #10
 
 my $var3 = $vars[2]; ## arrays start from 0.
 ok defined $var3, 'get variable by order'; #11

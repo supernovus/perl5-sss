@@ -90,29 +90,8 @@ Adds a new variable definition to the system. NOTE: This is meant for definition
 not stored in the .sss file. Do not attempt to override existing definitions, or
 bad things will happen.
 
-  $def =
-  {
-    id      => 9999,
-    name    => 'uid',
-    label   => 'my label',
-    start   => 24,
-    finish  => 25,
-    type    => 'SINGLE',
-    values  =>
-    {
-      start  => 1,
-      finish => 99,
-      cats   =>
-      [
-        { 
-          1  => { text => "First" },
-          2  => { text => "Second" },
-          99 => { tex' => "Uknown", special => 1 },
-        }
-      ]
-    }
-  };
-  $sss->add_var($def);
+NOTE: Do not call this directly, use load_defs() instead, it can load more than
+one definition file, as long as they specify different variables.
 
 =cut
 
@@ -279,14 +258,17 @@ sub load_defs
         }
         when (/^\s*(\d+)\s*"(.*?)"\s*(?:(SPECIAL)\s*)?$/i)
         { ## We found a categorical label.
-          $values->{cats}->{$1} = 
+          my $catval = 
           { 
+            id   => $1,
             text => $2,
           };
           if ($3)
           {
-            $values->{cats}->{$1}->{special} = 1;
+            $catval->{special} = 1;
           }
+          $values->{cats}->{byid}->{$1} = $catval;
+          push(@{$values->{cats}->{ordered}}, $catval);
         }
         when (/^\s*END\s*VALUES\s*$/)
         { ## End a VALUES block, saving the values to the variable.
@@ -348,7 +330,11 @@ sub load_defs
           { ## Start tracking values.
             $values = 
             {
-              cats => {},   # Storage of labeled categories.
+              cats =>          ## Categories with defined labels.
+              {
+                byid    => {}, ## Indexed by category id.
+                ordered => [], ## Indexed by defined order.
+              },
             };
           }
         }
@@ -438,10 +424,13 @@ sub load_recs
 
       if ($var->{type} eq 'MULTIPLE')
       { ## Okay, let's process multiples.
-        my $multiples = {};
-        my %cats = %{$var->{values}->{cats}};
-        my @catkeys = keys %cats;
-        my $catcount = scalar @catkeys;
+        my $multiples = 
+        {
+          byid    => {}, ## Indexed by value id.
+          ordered => [], ## Indexed by original order.
+        };
+        my @cats = @{$var->{values}->{cats}->{ordered}};
+        my $catcount = scalar @cats;
         my $reccount = length($rawvalue);
         if (exists $var->{subfields})
         { ## We're in SPREAD format.
@@ -464,8 +453,9 @@ sub load_recs
             push @found, $inval;
           }
           ## Now let's set our data.
-          foreach my $key (@catkeys)
+          foreach my $cat (@cats)
           { ## Let's see if we are set.
+            my $key = $cat->{id};
             my $subval = 0;
             foreach my $found (@found)
             { if ($found =~ /^\s*$/) { next; } ## skip empty.
@@ -475,9 +465,11 @@ sub load_recs
                 $subval = 1;
               }
             }
-            $multiples->{$key} = {};
-            $multiples->{$key}->{value} = $subval;
-            $multiples->{$key}->{text}  = $cats{$key}->{text};
+            my $mval = {};
+            $mval->{value} = $subval;
+            $mval->{text}  = $cat->{text}; ## reference.
+            $multiples->{byid}->{$key} = $mval;
+            push(@{$multiples->{ordered}}, $mval);
           }
         }
         else
@@ -486,22 +478,25 @@ sub load_recs
           { ## You can't have a field smaller than the number of values.
             croak "Field size is smaller than values on variable $name";
           }
-          foreach my $key (@catkeys)
+          foreach my $cat (@cats)
           { ## Let's get our subvalue.
+            my $key = $cat->{id};
             my $start = $key - 1;
             my $subval = substr($rawvalue, $start, 1);
-            $multiples->{$key} = {};
-            $multiples->{$key}->{value} = $subval;
-            $multiples->{$key}->{text}  = $cats{$key}->{text};
+            my $mval = {};
+            $mval->{value} = $subval;
+            $mval->{text}  = $cat->{text}; ## reference.
+            $multiples->{byid}->{$key} = $mval;
+            push(@{$multiples->{ordered}}, $mval);
           }
         }
         $recspec->{values} = $multiples;
       }
       else
       { ## We're not a multiple, let's see if we have values.
-        if (exists $var->{values} && exists $var->{values}->{cats}->{$value})
+        if (exists $var->{values} && exists $var->{values}->{cats}->{byid}->{$value})
         {
-          $recspec->{text} = $var->{values}->{cats}->{$value}->{text};
+          $recspec->{text} = $var->{values}->{cats}->{byid}->{$value}->{text};
         }
       }
     }

@@ -594,6 +594,10 @@ in the specification have been followed, in particular recommendations 1 and 2.
 
 Timothy Totten <2010@huri.net>
 
+=head1 LICENSE
+
+Artistic License 2.0
+
 =cut
 
 ## End of package.

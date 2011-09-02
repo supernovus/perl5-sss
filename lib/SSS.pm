@@ -383,9 +383,7 @@ sub load_recs
 {
   my ($self, $file) = @_;
   if (!$file || !-f $file) { croak "Missing or invalid records file."; }
-  my @defs = @{$self->{defs}->{vars}->{ordered}};
-  my $defcount = scalar @defs;
-  if ($defcount < 1) { croak "No definitions found, cannot continue."; }
+  my @defs = $self->get_vars(); 
   my @lines = _slurp($file);
   for my $line (@lines)
   { ## First, let's store the raw record.
@@ -395,6 +393,7 @@ sub load_recs
       raw     => $line,
       byname  => {},
       byid    => {},
+      ordered => [],
     };
     ## Next, let's process our known definitions.
     foreach my $var (@defs)
@@ -414,6 +413,7 @@ sub load_recs
       my $recspec = {};
       $rec->{byname}->{$name} = $recspec;
       $rec->{byid}->{$id}     = $recspec;
+      push(@{$rec->{ordered}}, $recspec);      
       ## Okay, let's get the value.
       my $rawvalue = substr($line, $start, $length);
       $recspec->{rawvalue} = $rawvalue;

@@ -298,10 +298,19 @@ sub load_defs
           if ($2)
           {
             $variable->{finish} = $2;
+            if ($variable->{finish} == $variable->{start})
+            {
+              $variable->{length} = 1;
+            }
+            else
+            {
+              $variable->{length} = $variable->{finish} - ($variable->{start} - 1);
+            }
           }
           else
           {
             $variable->{finish} = $1;
+            $variable->{length} = 1;
           }
         }
         my $type = $variable->{type};
@@ -340,6 +349,14 @@ sub load_defs
         }
         when (/^\s*END\s*VARIABLE\s*$/i)
         { ## End a variable block.
+          if 
+          ( $variable->{type} eq 'MULTIPLE' 
+            && exists $variable->{subfields}
+            && ! exists $variable->{width}
+          ) ## Okay, we have no width field, let's calculate it.
+          {
+            $variable->{width} = $variable->{length} / $variable->{subfields};
+          }
           ## You can look them up by id, name, or an ordered array.
           $self->add_var($variable);
           undef($variable); ## Clear out the variable.
@@ -400,14 +417,7 @@ sub load_recs
     { 
       my $start  = $var->{start}-1;
       my $finish = $var->{finish};
-      my $length;
-      if ($start == $finish)
-      {
-        $length = 1;
-      }
-      else {
-        $length = $finish - $start;
-      }
+      my $length = $var->{length};
       my $id     = $var->{id};
       my $name   = $var->{name};
       my $recspec = {};
@@ -437,16 +447,7 @@ sub load_recs
           my $subfields = $var->{subfields};
           ## Okay, we're going to generate a cache of known values.
           my @found;
-          my $width;
-          if (exists $var->{width})
-          {
-            $width = $var->{width};
-          }
-          else
-          {
-            $width = $reccount / $subfields;
-            $self->debug(3, "width: $width");
-          }
+          my $width = $var->{width};
           for (my $st = 0; $st <= $reccount - $width; $st += $width)
           { ## Find our values.
             my $inval = substr($rawvalue, $st, $width);
@@ -485,7 +486,7 @@ sub load_recs
         { ## We're in Bitstring format.
           if ($reccount < $catcount)
           { ## You can't have a field smaller than the number of values.
-            croak "Field size is smaller than values on variable $name";
+            croak "Field size ($catcount) is smaller than values ($reccount) on variable $name";
           }
           foreach my $cat (@cats)
           { ## Let's get our subvalue.

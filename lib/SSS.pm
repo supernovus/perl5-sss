@@ -450,7 +450,11 @@ sub load_recs
           for (my $st = 0; $st <= $reccount - $width; $st += $width)
           { ## Find our values.
             my $inval = substr($rawvalue, $st, $width);
-            push @found, $inval;
+            my $imval = 
+            {
+              value => $inval
+            };
+            push @found, $imval;
           }
           ## Now let's set our data.
           foreach my $cat (@cats)
@@ -458,19 +462,24 @@ sub load_recs
             my $key = $cat->{id};
             my $subval = 0;
             foreach my $found (@found)
-            { if ($found =~ /^\s*$/) { next; } ## skip empty.
-              $self->debug(3, "Comparing $key to $found");
-              if ($found == $key)
+            { my $fval = $found->{value};
+              if ($fval =~ /^\s*$/) { next; } ## skip empty.
+              $self->debug(3, "Comparing $key to $fval");
+              if ($fval == $key)
               {
                 $subval = 1;
+                $found->{text} = $cat->{text};  ## reference.
               }
             }
-            my $mval = {};
-            $mval->{value} = $subval;
-            $mval->{text}  = $cat->{text}; ## reference.
+            my $mval = 
+            {
+              value => $subval,
+              text  => $cat->{text},  ## reference.
+            };
             $multiples->{byid}->{$key} = $mval;
-            push(@{$multiples->{ordered}}, $mval);
+            #push(@{$multiples->{ordered}}, $mval);
           }
+          $multiples->{ordered} = \@found;
         }
         else
         { ## We're in Bitstring format.

@@ -14,7 +14,7 @@ BEGIN
 use SSS v11.8.24; ## Minimum version
 use Test::More;
 
-plan tests => 36;
+plan tests => 34;
 
 my $sss = SSS->new();
 $sss->{debug} = 1;    ## customize this to your needs.
@@ -66,16 +66,14 @@ is $multi4->{5}->{value}, 1, 'get SPREAD MULTI (2)'; #26
 is $multi4->{15}->{value}, 0, 'get SPREAD MULTI (3)'; #27
 is $multi4->{26}->{value}, 0, 'get SPREAD MULTI (4)'; #28
 my $multi5 = $recs[1]->{test5}->{values}->{ordered};
-is $multi5->[0]->{value}, 0, 'get ordered SPREAD MULTI (1)'; #29
-is $multi5->[1]->{value}, 0, 'get ordered SPREAD MULTI (2)'; #30
-is $multi5->[2]->{value}, 1, 'get ordered SPREAD MULTI (3)'; #31
-is $multi5->[3]->{value}, 1, 'get ordered SPREAD MULTI (4)'; #32
+is $multi5->[0]->{value}, 15, 'get ordered SPREAD MULTI (1)'; #29
+is $multi5->[1]->{value}, 26, 'get ordered SPREAD MULTI (2)'; #30
 
 ## And some MULTIPLE records in SPREAD format with implied width.
 my $multi6 = $recs[0]->{test6}->{values}->{byid};
-is $multi6->{1}->{value}, 0, 'get implicit SPREAD MULTI (1)'; #33
-is $multi6->{2}->{value}, 1, 'get implicit SPREAD MULTI (2)'; #34
+is $multi6->{1}->{value}, 0, 'get implicit SPREAD MULTI (1)'; #31
+is $multi6->{2}->{value}, 1, 'get implicit SPREAD MULTI (2)'; #32
 my $multi7 = $recs[1]->{test6}->{values}->{ordered};
-is $multi7->[0]->{value}, 1, 'get ordered implicit SPREAD MULTI (1)'; #35
-is $multi7->[1]->{value}, 0, 'get ordered implicit SPREAD MULTI (2)'; #36
+is $multi7->[0]->{value}, 1, 'get ordered implicit SPREAD MULTI (1)'; #33
+is $multi7->[1]->{value}, 0, 'get ordered implicit SPREAD MULTI (2)'; #34
 

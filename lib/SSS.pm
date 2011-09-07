@@ -524,10 +524,30 @@ Returns an Array representing the records.
 
 sub get_recs
 {
-  my ($self) = @_;
+  my ($self, %opts) = @_;
   my @recs = @{$self->{recs}};
   my $reccount = scalar @recs;
   if ($reccount < 1) { croak "No records found, cannot continue."; }
+  if (exists $opts{filter} && $opts{filter} && ref $opts{filter} eq 'HASH')
+  { ## Filters have been defined. Let's filter the results.
+    my @return;
+    RECORD: for my $rec (@recs)
+    {
+      for my $key (keys %{$opts{filter}})
+      {
+        my $value = $opts{filter}->{$key};
+        if 
+        ( !exists $rec->{byname}->{$key} 
+          || $rec->{byname}->{$key}->{value} ne $value
+        )
+        {
+          next RECORD; ## Skip filtered records.
+        }
+      }
+      push @return, $rec;
+    }
+    return @return;
+  }
   return @recs;
 }
 
@@ -547,8 +567,8 @@ where each hash key is the NAME field from the survey definitions.
 
 sub get_recs_by_name
 {
-  my ($self) = @_;
-  my @recs = $self->get_recs();
+  my ($self, %opts) = @_;
+  my @recs = $self->get_recs(%opts);
   my @return;
   for my $rec (@recs)
   { ## We are only interested in the name index.
@@ -573,8 +593,8 @@ where each hash key is the VARIABLE ID from the survey definitions.
 
 sub get_recs_by_id
 {
-  my ($self) = @_;
-  my @recs = $self->get_recs();
+  my ($self, %opts) = @_;
+  my @recs = $self->get_recs(%opts);
   my @return;
   for my $rec (@recs)
   { ## We are only interested in the id index.

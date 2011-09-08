@@ -22,7 +22,7 @@ This library is specifically for the non-XML version 1.1
 
 package SSS;
 
-our $VERSION = v11.8.24;
+our $VERSION = v11.9.7;
 
 use v5.10;
 use strict;

@@ -1,5 +1,6 @@
-.PHONY: all
-all:
+.PHONY: DEFAULT
+
+DEFAULT:
 	cat Makefile
 
 README: lib/SSS.pm

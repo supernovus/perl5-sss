@@ -22,34 +22,14 @@ This library is specifically for the non-XML version 1.1
 
 package SSS;
 
-our $VERSION = v11.9.7;
+our $VERSION = v11.9.8;
 
-use v5.10;
-use strict;
-use warnings;
+## We are using the Huri Perl base library.
+use Huri object=>1, add=>['lines'];
 use Carp;
 
-## Private function for reading files.
-##  my @lines = _slurp($filename);
-sub _slurp {
-  my $file = shift;
-  open (my $in, $file);
-  my @lines = <$in>;
-  close ($in);
-  return @lines;
-}
-
-## Private method for debugging purposes.
-##   $self->debug($level, $message);
-sub debug
-{
-  my $self = shift;
-  my $level = shift;
-  if ($self->{debug} >= $level) {
-    print "# ";
-    say @_;
-  }
-}
+## If you need debugging, use Huri::Debug.
+#use Huri::Debug show=>['load_defs','load_recs'];
 
 =head1 PUBLIC METHODS
 
@@ -63,35 +43,32 @@ Create a new SSS object. Does not load any data.
 
 =cut
 
-sub new
-{ 
-  my $class = shift;
-  my $self  = 
-  { 
-    debug => 0,           # set to different levels of debugging details.
-    defs  =>              # survey definition, stored in a '.sss' file.
+has 'defs'; ## Definitions, loaded from .sss files.
+has 'recs'; ## Records, loaded from .asc files.
+
+sub BUILD
+{
+  my $self = shift;
+  my $defs =
+  {
+    vars =>              # the variables defined in the survey.
     {
-      vars =>             # the variables defined in the survey.
-      {
-        byname  => {},     # Lookup done by NAME field.
-        byid    => {},     # Lookup done by VARIABLE id.
-        ordered => [],     # A plain ordered array.
-      },
-    },              
-    recs  => [],          # records, stored in a '.asc' file.
+      byname  => {},     # Lookup done by NAME field.
+      byid    => {},     # Lookup done by VARIABLE id.
+      ordered => [],     # A plain ordered array.
+    },
   };
-  bless $self, $class;
-  return $self;
+  $self->set_defs($defs);
+  $self->set_recs([]);
 }
 
 =item add_var($hashref)
 
-Adds a new variable definition to the system. NOTE: This is meant for definitions
-not stored in the .sss file. Do not attempt to override existing definitions, or
-bad things will happen.
+Adds a new variable definition to the system. 
 
-NOTE: Do not call this directly, use load_defs() instead, it can load more than
-one definition file, as long as they specify different variables.
+NOTE: There should really be no need to call this directly, use load_defs() 
+instead, it can load more than one definition file, as long as they specify 
+different variables.
 
 =cut
 
@@ -99,13 +76,13 @@ sub add_var
 {
   my ($self, $variable) = @_;
   my $id = $variable->{id};
-  $self->{defs}->{vars}->{byid}->{$id} = $variable;
+  $self->defs->{vars}->{byid}->{$id} = $variable;
   if (exists $variable->{name})
   {
     my $name = $variable->{name};
-    $self->{defs}->{vars}->{byname}->{$name} = $variable;
+    $self->defs->{vars}->{byname}->{$name} = $variable;
   }
-  push(@{$self->{defs}->{vars}->{ordered}}, $variable);
+  push(@{$self->defs->{vars}->{ordered}}, $variable);
 }
 
 =item get_vars_by_name()
@@ -120,7 +97,7 @@ NAME field from the survey definition.
 sub get_vars_by_name
 {
   my ($self) = @_;
-  return $self->{defs}->{vars}->{byname};
+  return $self->defs->{vars}->{byname};
 } 
 
 =item get_var_by_name($name)
@@ -159,7 +136,7 @@ VARIABLE ID from the survey definition.
 sub get_vars_by_id
 {
   my ($self) = @_;
-  return $self->{defs}->{vars}->{byid};
+  return $self->defs->{vars}->{byid};
 }
 
 =item get_var_by_id()
@@ -197,7 +174,7 @@ Returns an Array representing the variables, in the order they were defined.
 sub get_vars
 {
   my ($self) = @_;
-  my @vars = @{$self->{defs}->{vars}->{ordered}};
+  my @vars = @{$self->defs->{vars}->{ordered}};
   my $varcount = scalar @vars;
   if ($varcount < 1) { croak "No variables found, cannot continue."; }
   return @vars;
@@ -215,9 +192,9 @@ sub get_field
 {
   my ($self, $field) = @_;
   if (!defined $field) { croak "You must specify a field to get in get_field()"; }
-  if (exists $self->{defs}->{$field})
+  if (exists $self->defs->{$field})
   {
-    return $self->{defs}->{$field};
+    return $self->defs->{$field};
   }
   return;
 }
@@ -240,12 +217,12 @@ sub load_defs
   my @varkeys = ('name', 'label');
   my @types = ('SINGLE', 'MULTIPLE', 'QUANTITY', 'CHARACTER', 'LOGICAL');
   if (!$file || !-f $file) { croak "Missing or invalid definition file."; }
-  my @lines = _slurp($file);
-  $self->debug(2, "== Definitions ==");
+  my @lines = lines($file);
+  ##[load_defs] == Definitions ==
   for my $line (@lines)
   {
     chomp($line);
-    $self->debug(2, $line);
+    ##[load_defs]= $line
     given ($line)
     { ## Look for known Triple-S 1.1 statements.
       ## Note: All Triple-S 1.1 statements are case-insensitive.
@@ -372,12 +349,12 @@ sub load_defs
         { ## Look for survey-wide keys.
           when (/^\s*$key\s*"(.*?)"\s*$/i)
           { ## Set data based on the keys.
-            $self->{defs}->{$key} = $1;
+            $self->defs->{$key} = $1;
           }
         }
         when (/^\s*RECORD\s*(\w)\s*$/i)
         { ## Record ID
-          $self->{defs}->{record} = $1;
+          $self->defs->{record} = $1;
         }
         when (/^\s*VARIABLE\s*(\d+)\s*$/i)
         { ## Starting a variable block.
@@ -401,7 +378,7 @@ sub load_recs
   my ($self, $file) = @_;
   if (!$file || !-f $file) { croak "Missing or invalid records file."; }
   my @defs = $self->get_vars(); 
-  my @lines = _slurp($file);
+  my @lines = lines($file);
   for my $line (@lines)
   { ## First, let's store the raw record.
     chomp($line);
@@ -465,7 +442,7 @@ sub load_recs
             foreach my $found (@found)
             { my $fval = $found->{value};
               if ($fval =~ /^\s*$/) { next; } ## skip empty.
-              $self->debug(3, "Comparing $key to $fval");
+              ##[load_recs] Comparing $key to $fval
               if ($fval == $key)
               {
                 $subval = 1;
@@ -510,7 +487,7 @@ sub load_recs
         }
       }
     }
-    push(@{$self->{recs}}, $rec);
+    push(@{$self->recs}, $rec);
   }
 }
 
@@ -525,7 +502,7 @@ Returns an Array representing the records.
 sub get_recs
 {
   my ($self, %opts) = @_;
-  my @recs = @{$self->{recs}};
+  my @recs = @{$self->recs};
   my $reccount = scalar @recs;
   if ($reccount < 1) { croak "No records found, cannot continue."; }
   if (exists $opts{filter} && $opts{filter} && ref $opts{filter} eq 'HASH')

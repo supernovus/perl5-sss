@@ -591,6 +591,7 @@ or run 'perl ./t/name-of-test.t' to run a single test.
 =head1 DEPENDENCIES
 
 Perl 5.10 or higher
+The Huri Perl library set
 
 =head1 BUGS AND LIMITATIONS
 

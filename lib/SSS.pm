@@ -14,8 +14,8 @@ This library is specifically for the non-XML version 1.1
 
  use SSS;
  my $sss = SSS->new();
- $sss->load_defs('survey.sss');
- $sss->load_recs('survey.asc');
+ $sss->load_defs(file=>'survey.sss');
+ $sss->load_recs(file=>'survey.asc');
  ### do stuff with the data
 
 =cut
@@ -203,7 +203,19 @@ sub get_field
 
 Load a definition file (.sss extension)
 
-  $sss->load_defs("survey.sss");
+  $sss->load_defs(file=>"survey.sss");
+
+You can also load the definitions from a string:
+
+  $sss->load_defs(text=>$string);
+
+Finally, you can choose to only load selected variables,
+using the include or exclude options:
+
+  $sss->load_defs(file=>"big.sss", include=>['VarA', 'VarB', 'VarC']);
+  $sss->load_defs(text=>$string, exclude=>['VarD', 'VarE', 'VarF']);
+
+The include and exclude options are mutually exclusive.
 
 Stores the definitions in an object member called defs.
 
@@ -211,13 +223,32 @@ Stores the definitions in an object member called defs.
 
 sub load_defs
 {
-  my ($self, $file) = @_;
+  my ($self, %opts) = @_;
   my ($variable, $values); ## Private members for storage of VARIABLE and VALUES.
   my @topkeys = ('date', 'time', 'origin', 'user', 'title');
   my @varkeys = ('name', 'label');
   my @types = ('SINGLE', 'MULTIPLE', 'QUANTITY', 'CHARACTER', 'LOGICAL');
-  if (!$file || !-f $file) { croak "Missing or invalid definition file."; }
-  my @lines = lines($file);
+  my @lines;
+  my @include;
+  my @exclude;
+  if ($opts{include})
+  {
+    @include = @{$opts{include}};
+  }
+  elsif ($opts{exclude})
+  {
+    @exclude = @{$opts{exclude}};
+  }
+  if ($opts{file})
+  { my $file = $opts{file};
+    if (!$file || !-f $file) { croak "Missing or invalid definition file."; }
+    @lines = lines($file);
+  }
+  elsif ($opts{text})
+  { 
+    @lines = split(/\n/, $opts{text});
+  }
+  else { croak "Either a file or text parameter is required in load_defs()"; }
   ##[load_defs] == Definitions ==
   for my $line (@lines)
   {
@@ -358,7 +389,16 @@ sub load_defs
         }
         when (/^\s*VARIABLE\s*(\d+)\s*$/i)
         { ## Starting a variable block.
-          $variable = { id => $1 };
+          my $varname = $1;
+          if (@include)
+          {
+            if (!($varname ~~ @include)) { next; } ## Skip unknowns.
+          }
+          elsif (@exclude)
+          {
+            if ($varname ~~ @exclude) { next; } ## Skip unwanted.
+          }
+          $variable = { id => $varname };
         }
       }
     }
@@ -369,16 +409,31 @@ sub load_defs
 
 Load a records file (typically with an .asc extension)
 
-  $sss->load_recs("survey.asc");
+  $sss->load_recs(file=>"survey.asc");
+
+You can also load records from a string:
+
+  $sss->load_recs(text=>$string);
 
 =cut
 
 sub load_recs
 {
-  my ($self, $file) = @_;
-  if (!$file || !-f $file) { croak "Missing or invalid records file."; }
+  my ($self, %opts) = @_;
+  my @lines;
+  if ($opts{file})
+  {
+    if (!$file || !-f $file) { croak "Missing or invalid records file."; }
+    @lines = lines($file);
+  }
+  elsif ($opts{text})
+  {
+    @lines = split(/\n/, $opts{text});
+  }
+  else { croak "Either a file or text parameter is required in load_recs()"; }
+
   my @defs = $self->get_vars(); 
-  my @lines = lines($file);
+
   for my $line (@lines)
   { ## First, let's store the raw record.
     chomp($line);
@@ -496,6 +551,11 @@ sub load_recs
 Returns an Array representing the records.
 
   my @recs = $sss->get_recs();
+
+You can filter the results, giving only records that
+have certain fields set to certain values:
+
+  my @select = $sss->get_recs(filter=>{MyVar=>1});
 
 =cut
 

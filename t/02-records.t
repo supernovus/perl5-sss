@@ -11,7 +11,7 @@ BEGIN
   unshift @INC, './lib';
 }
 
-use SSS v11.8.24; ## Minimum version
+use SSS v11.9.19; ## Minimum version
 use Test::More;
 
 plan tests => 34;
@@ -19,8 +19,8 @@ plan tests => 34;
 my $sss = SSS->new();
 $sss->{debug} = 1;    ## customize this to your needs.
 
-$sss->load_defs('./t/test-defs.sss');
-$sss->load_recs('./t/test-records.asc');
+$sss->load_defs(file=>'./t/test-defs.sss');
+$sss->load_recs(file=>'./t/test-records.asc');
 
 ## Test the basic tables.
 my @recs = $sss->get_recs_by_name();

@@ -423,6 +423,7 @@ sub load_recs
   my @lines;
   if ($opts{file})
   {
+    my $file = $opts{file};
     if (!$file || !-f $file) { croak "Missing or invalid records file."; }
     @lines = lines($file);
   }

@@ -11,7 +11,7 @@ BEGIN
   unshift @INC, './lib';
 }
 
-use SSS v11.8.24; ## Minimum version
+use SSS v11.9.19; ## Minimum version
 use Test::More;
 
 plan tests => 14;
@@ -19,7 +19,7 @@ plan tests => 14;
 my $sss = SSS->new();
 $sss->{debug} = 2;    ## customize this to your needs.
 
-$sss->load_defs('./t/test-defs.sss');
+$sss->load_defs(file=>'./t/test-defs.sss');
 
 is $sss->get_field('date'), '2011-08-23', 'get survey-wide field'; #1
 

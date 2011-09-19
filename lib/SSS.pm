@@ -22,7 +22,7 @@ This library is specifically for the non-XML version 1.1
 
 package SSS;
 
-our $VERSION = v11.9.8;
+our $VERSION = v11.9.19;
 
 ## We are using the Huri Perl base library.
 use Huri object=>1, add=>['lines'];

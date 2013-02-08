@@ -1,4 +1,0 @@
-* Add SSS::Definitions sub-class to replace the $self->defs mess.
-* Add SSS::Records sub-class to replace the $self->recs mess.
-* Add ability to ouput a new .sss file based on loaded definitions.
-* Add more methods for manipulation of definitions, for editing capabilities.

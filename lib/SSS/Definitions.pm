@@ -310,14 +310,14 @@ sub load_defs
   $text =~ s/^\s+//g; ## Trim leading whitespace.
   if (substr($text, 0, 1) eq '<')
   {
-    require SSS::Definitions::XML;
-    my $parser = SSS::Definitions::XML->new(parent => $self);
+    require SSS::Definitions::Parser::XML;
+    my $parser = SSS::Definitions::Parser::XML->new(parent => $self);
     $parser->load_defs($text, %opts);
   }
   elsif (substr($text, 0, 3) eq 'SSS')
   {
-    require SSS::Definitions::Classic;
-    my $parser = SSS::Definitions::Classic->new(parent => $self);
+    require SSS::Definitions::Parser::Classic;
+    my $parser = SSS::Definitions::Parser::Classic->new(parent => $self);
     $parser->load_defs($text, %opts);
   }
   else

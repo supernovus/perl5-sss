@@ -144,14 +144,14 @@ sub load_recs
   my $format = lc($self->parent->defs->record_format);
   if ($format eq 'fixed')
   {
-    require SSS::Records::Fixed;
-    my $parser = SSS::Records::Fixed->new(parent => $self);
+    require SSS::Records::Parser::Fixed;
+    my $parser = SSS::Records::Parser::Fixed->new(parent => $self);
     $parser->load_recs($text, %opts);
   }
   elsif ($format eq 'csv')
   {
-    require SSS::Records::CSV;
-    my $parser = SSS::Records::CSV->new(parent => $self);
+    require SSS::Records::Parser::CSV;
+    my $parser = SSS::Records::Parser::CSV->new(parent => $self);
     $parser->load_recs($text, %opts);
   }
   else

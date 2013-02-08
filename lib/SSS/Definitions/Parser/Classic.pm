@@ -1,4 +1,4 @@
-package SSS::Definitions::Classic;
+package SSS::Definitions::Parser::Classic;
 
 use v5.10;
 use Mouse;

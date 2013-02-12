@@ -14,7 +14,7 @@ BEGIN
 use SSS v11.9.19; ## Minimum version
 use Test::More;
 
-plan tests => 16;
+plan tests => 23;
 
 my $sss = SSS->new();
 
@@ -47,4 +47,16 @@ ok defined $var3, 'get variable by order'; #13
 is $var3->label, 'Test 3', 'get variable label'; #14
 is $var3->range_start, 1, 'get value start'; #15
 is $var3->range_end, 99, 'get value finish'; #16
+is $var3->use, undef, 'variable with no use flag'; #17
+
+is $var1->use, 'serial', 'variable with use flag'; #18
+is $var1->format, 'numeric', 'default variable format'; #19
+
+my $en_i = $var1->get_label(lang => 'en', mode => 'interview');
+ok defined $en_i, 'get specific label by query (1)'; #20
+is $en_i->text, 'Would you #1', 'specific label text (1)'; #21
+
+my $fr_a = $var1->get_label(lang => 'fr', mode => 'analysis');
+ok defined $fr_a, 'get specific label by query (2)'; #22
+is $fr_a->text, 'Ils seraient #1', 'specific label text (2)'; #23
 

@@ -153,12 +153,20 @@ sub _process_variable
 {
   my ($self, $variable) = @_;
 
-  my @var_keys = ('name', 'label');
-
   my $vid  = $variable->getAttribute('ident');
   my $type = $variable->getAttribute('type');
 
   my $var = SSS::Definitions::Variable->new(id => $vid, type => $type);
+
+  my @var_keys = ('use', 'format');
+
+  for my $key (@var_keys)
+  {
+    if ($variable->hasAttribute($key))
+    {
+      $var->$key($variable->getAttribute($key));
+    }
+  }
 
   my @statements = $variable->nonBlankChildNodes;
 

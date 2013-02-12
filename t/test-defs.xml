@@ -1,4 +1,4 @@
-<sss version="2.0">
+<sss version="2.0" languages="en fr" modes="interview analysis">
   <date>2013-02-12</date>
   <time>13:51</time>
   <origin>WrittenFromScratch v2</origin>
@@ -10,7 +10,12 @@
     <record ident="A">
       <variable ident="1" use="serial" type="character">
         <name>test1</name>
-        <label>Test 1</label>
+        <label>Test 1
+          <text xml:lang="en" mode="interview">Would you #1</text>
+          <text xml:lang="en" mode="analysis">They would #1</text>
+          <text xml:lang="fr" mode="interview">Seriez-vous #1</text>
+          <text xml:lang="fr" mode="analysis">Ils seraient #1</text>
+        </label>
         <position start="1" finish="4" />
         <size>4</size>
       </variable>

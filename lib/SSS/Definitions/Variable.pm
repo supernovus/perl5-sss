@@ -2,6 +2,8 @@ package SSS::Definitions::Variable;
 
 use Mouse;
 
+with qw(SSS::Definitions::Labelled);
+
 =item id
 
 The VARIABLE ID
@@ -22,18 +24,6 @@ The VARIABLE NAME
 =cut
 
 has 'name' =>
-(
-  is       => 'rw',
-  isa      => 'Str',
-);
-
-=item label
-
-The VARIABLE LABEL
-
-=cut
-
-has 'label' =>
 (
   is       => 'rw',
   isa      => 'Str',
@@ -179,6 +169,31 @@ sub _build_subfield_width
   my ($self) = @_;
   return $self->length / $self->subfields;
 }
+
+=item use
+
+The variable use, SSS XML 1.2+ only.
+
+=cut
+
+has 'use' =>
+(
+  is  => 'rw',
+  isa => 'Str',
+);
+
+=item format
+
+The variable format, SSS XML 2.0+ only.
+
+=cut
+
+has 'format' =>
+(
+  is      => 'rw',
+  isa     => 'Str',
+  default => 'numeric',
+);
 
 =item add_val ($value_object)
 

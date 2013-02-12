@@ -2,6 +2,8 @@ package SSS::Definitions::Variable::Value;
 
 use Mouse;
 
+with qw(SSS::Definitions::Labelled);
+
 =item value
 
 The Value value (aka the Value id.)
@@ -10,34 +12,21 @@ The Value value (aka the Value id.)
 
 has 'value' =>
 (
-  is       => 'ro',
+  is       => 'rw',
   isa      => 'Str',
   required => 1,
 );
 
-=item label
+=item score
 
-The default Value label. There may also be language-specific labels.
-
-=cut
-
-has 'label' =>
-(
-  is       => 'rw',
-  isa      => 'Str',
-);
-
-=item labels
-
-Language-specific labels. SSS XML 1.2+ only.
+The Value score (optional, SSS XML 2.0+ only.)
 
 =cut
 
-has 'labels' =>
+has 'score' =>
 (
-  is      => 'ro',
-  isa     => 'HashRef',
-  default => sub { {} },
+  is  => 'rw',
+  isa => 'Num',
 );
 
 =item special
@@ -52,25 +41,5 @@ has 'special' =>
   isa     => 'Bool',
   default => 0,
 );
-
-=item get_label($language)
-
-See if a label for the requested language exists. 
-If it does, return it. If it doesn't return the default label.
-
-=cut
-
-sub get_label
-{
-  my ($self, $lang) = @_;
-  if (exists $self->labels->{$lang})
-  {
-    return $self->labels->{$lang};
-  }
-  else
-  {
-    return $self->label;
-  }
-}
 
 1;

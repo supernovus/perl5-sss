@@ -3,6 +3,8 @@ package SSS::Definitions;
 use Mouse;
 use Carp;
 
+with qw(SSS::Definitions::Labelled);
+
 has 'parent' => 
 (
   is       => 'ro',
@@ -47,6 +49,44 @@ has 'vars_by_id' =>
   is        => 'ro',
   isa       => 'HashRef',
   default   => sub { {} },
+);
+
+=item sss_version
+
+The version of the Triple-S specification of the definition document.
+
+=cut
+
+has 'sss_version' =>
+(
+  is  => 'rw',
+  isa => 'Str',
+);
+
+=item langs
+
+The languages listed in the SSS tag. SSS XML 1.2+ only.
+
+=cut
+
+has 'langs' =>
+(
+  is      => 'rw',
+  isa     => 'ArrayRef',
+  default => sub { [] },
+);
+
+=item modes
+
+The label modes listed in the SSS tag. SSS XML 2.0+ only.
+
+=cut
+
+has 'modes' =>
+(
+  is      => 'rw',
+  isa     => 'ArrayRef',
+  default => sub { [] },
 );
 
 =item date
@@ -125,13 +165,16 @@ has 'survey_version' =>
 
 The SURVEY TITLE field from the definitions, if set.
 
+This is actually a wrapper to the label, which can be used to
+provide specialized texts for various languages and/or modes.
+
 =cut
 
-has 'survey_title' =>
-(
-  is  => 'rw',
-  isa => 'Str',
-);
+sub survey_title
+{
+  my $self = shift;
+  return $self->label(@_);
+}
 
 =item record_id
 

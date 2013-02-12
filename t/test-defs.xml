@@ -1,0 +1,71 @@
+<sss version="2.0">
+  <date>2013-02-12</date>
+  <time>13:51</time>
+  <origin>WrittenFromScratch v2</origin>
+  <user>Timothy Totten</user>
+  <survey>
+    <name>TestSurvey</name>
+    <version>1</version>
+    <title>Test Survey</title>
+    <record ident="A">
+      <variable ident="1" use="serial" type="character">
+        <name>test1</name>
+        <label>Test 1</label>
+        <position start="1" finish="4" />
+        <size>4</size>
+      </variable>
+      <variable ident="2" type="single">
+        <name>test2</name>
+        <label>Test 2</label>
+        <position start="5" />
+        <values>
+          <value code="1">First</value>
+          <value code="2">Second</value>
+          <value code="3">Third</value>
+        </values>
+      </variable>
+      <variable ident="3" type="quantity">
+        <name>test3</name>
+        <label>Test 3</label>
+        <position start="6" finish="7" />
+        <values>
+          <range from="1" to="99" />
+        </values>
+      </variable>
+      <variable ident="4" type="multiple">
+        <name>test4</name>
+        <label>Test 4</label>
+        <position start="9" finish="11" />
+        <values>
+          <value code="1">One</value>
+          <value code="2">Two</value>
+          <value code="3">Three</value>
+        </values>
+      </variable>
+      <variable ident="5" type="multiple">
+        <name>test5</name>
+        <label>Test 5</label>
+        <position start="13" finish="16" />
+        <spread subfields="2" width="2" />
+        <values>
+          <value code="1">One</value>
+          <value code="5">Five</value>
+          <value code="15">Fifteen</value>
+          <value code="26">Twenty Six</value>
+        </values>
+      </variable>
+      <variable ident="6" type="multiple">
+        <name>test6</name>
+        <label>Test 6</label>
+        <position start="18" finish="21" />
+        <spread subfields="4" />
+        <values>
+          <value code="1">One</value>
+          <value code="2">Two</value>
+          <value code="3">Three</value>
+          <value code="4">Four</value>
+        </values>
+      </variable>
+    </record>
+  </survey>
+</sss>

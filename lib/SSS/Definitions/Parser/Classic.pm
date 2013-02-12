@@ -24,7 +24,7 @@ sub load_defs
 
   my ($survey, $record, $variable, $values); ## Storage of internals.
   my @top_keys = ('date', 'time', 'origin', 'user');
-  my @survey_keys = ('title', 'version', 'title');
+  my @survey_keys = ('title');
   my @var_keys = ('name', 'label', 'type');
 
   my (@include, @exclude); ## Filters. May be useful in certain cases.
@@ -212,12 +212,14 @@ sub load_defs
       }
       elsif ($tok eq 'version')
       {
-        if ($tokens[$i+1] ne '1.1')
+        my $ver = $tokens[++$i];
+        if ($ver ne '1.1')
         {
+          ## We only support Classic 1.1, sorry for anyone using 1.0.
           carp "Unsupported SSS version.";
           return;
         }
-        $i++;
+        $self->parent->sss_version($ver);
         next TOKEN;
       }
       elsif ($tok eq 'end' && lc($tokens[$i+1]) eq 'sss')

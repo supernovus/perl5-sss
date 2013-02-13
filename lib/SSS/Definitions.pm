@@ -351,7 +351,7 @@ sub load_defs
   }
 
   $text =~ s/^\s+//g; ## Trim leading whitespace.
-  if ($text =~ /^\</)
+  if ($text =~ /\<sss/)
   {
     require SSS::Definitions::Parser::XML;
     my $parser = SSS::Definitions::Parser::XML->new(parent => $self);

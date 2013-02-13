@@ -15,34 +15,26 @@ has 'fields' =>
   default => sub { [] },
 );
 
-sub fields_by_id
-{
-  my ($self) = @_;
-  my %fields;
-  for my $field (@{$self->fields})
-  {
-    my $id = $field->variable->id;
-    $fields{$id} = $field;
-  }
-  return \%fields;
-}
+has 'fields_by_id' =>
+(
+  is      => 'ro',
+  isa     => 'HashRef',
+  default => sub { {} }, 
+);
 
-sub fields_by_name
-{
-  my ($self) = @_;
-  my %fields;
-  for my $field (@{$self->fields})
-  {
-    my $name = $field->variable->name;
-    $fields{$name} = $field;
-  }
-  return \%fields;
-}
+has 'fields_by_name' =>
+(
+  is      => 'ro',
+  isa     => 'HashRef',
+  default => sub { {} },
+);
 
 sub add_field
 {
   my ($self, $field) = @_;
 
+  $self->fields_by_id->{$field->variable->id} = $field;
+  $self->fields_by_name->{$field->variable->name} = $field;
   push(@{$self->fields}, $field);
 
 }

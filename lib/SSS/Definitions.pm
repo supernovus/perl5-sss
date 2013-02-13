@@ -357,7 +357,7 @@ sub load_defs
     my $parser = SSS::Definitions::Parser::XML->new(parent => $self);
     $parser->load_defs($text, %opts);
   }
-  elsif (substr($text, 0, 3) eq 'SSS')
+  elsif (uc(substr($text, 0, 3)) eq 'SSS')
   {
     require SSS::Definitions::Parser::Classic;
     my $parser = SSS::Definitions::Parser::Classic->new(parent => $self);

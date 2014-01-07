@@ -3,3 +3,4 @@ README.bak
 lib/Huri*
 *.swp
 *~
+.build

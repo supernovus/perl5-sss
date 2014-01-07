@@ -37,6 +37,7 @@ Support creating definition and records files.
 =cut
 
 package SSS;
+# ABSTRACT: A Triple-S Library
 
 our $VERSION = v13.0.0;
 

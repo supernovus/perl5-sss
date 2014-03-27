@@ -25,7 +25,7 @@ If undefined, defaults to a magic language called '_DEFAULT_'.
 has 'lang' =>
 (
   is      => 'rw',
-  default => '_DEFAULT_',
+  default => sub { '_DEFAULT_' },
 );
 
 =item mode
@@ -39,7 +39,7 @@ If undefined, defaults to a magic mode called '_DEFAULT_'.
 has 'mode' =>
 (
   is      => 'rw',
-  default => '_DEFAULT_',
+  default => sub { '_DEFAULT_' },
 );
 
 1;

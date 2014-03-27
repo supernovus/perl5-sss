@@ -36,7 +36,7 @@ Used in SSS Classic 1.1 only, to mark "special" values.
 has 'special' =>
 (
   is      => 'rw',
-  default => 0,
+  default => sub { 0 },
 );
 
 1;

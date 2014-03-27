@@ -202,7 +202,7 @@ The format of the record data file.
 has 'record_format' =>
 (
   is      => 'rw',
-  default => 'fixed',
+  default => sub { 'fixed' },
 );
 
 =item record_skip
@@ -214,7 +214,7 @@ If set, and > 0, we skip this many lines in the record file.
 has 'record_skip' =>
 (
   is      => 'rw',
-  default => 0,
+  default => sub { 0 },
 );
 
 =item add_var($variable_object)

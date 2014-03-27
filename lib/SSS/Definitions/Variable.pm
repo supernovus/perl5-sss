@@ -178,7 +178,7 @@ The variable format, SSS XML 2.0+ only.
 has 'format' =>
 (
   is      => 'rw',
-  default => 'numeric',
+  default => sub { 'numeric' },
 );
 
 =item add_val ($value_object)

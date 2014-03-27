@@ -1,6 +1,6 @@
 package SSS::Records::Record::Field::Multiple;
 
-use Mouse;
+use Moo;
 
 #use Huri::Debug show => ['values'];
 
@@ -9,14 +9,12 @@ extends 'SSS::Records::Record::Field';
 has 'realvalues' =>
 (
   is      => 'ro',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 
 has 'realvalues_cache' =>
 (
   is      => 'ro',
-  isa     => 'HashRef',
   default => sub { {} },
 );
 

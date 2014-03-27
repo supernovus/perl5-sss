@@ -1,7 +1,7 @@
 package SSS::Records::Record::Field::Spread;
 
 use v5.10;
-use Mouse;
+use Moo;
 
 extends 'SSS::Records::Record::Field::Multiple';
 

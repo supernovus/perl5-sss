@@ -1,31 +1,27 @@
 package SSS::Records::Record;
 
-use Mouse;
+use Moo;
 
 has 'raw' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 has 'fields' =>
 (
   is      => 'ro',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 
 has 'fields_by_id' =>
 (
   is      => 'ro',
-  isa     => 'HashRef',
   default => sub { {} }, 
 );
 
 has 'fields_by_name' =>
 (
   is      => 'ro',
-  isa     => 'HashRef',
   default => sub { {} },
 );
 

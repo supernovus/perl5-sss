@@ -1,6 +1,6 @@
 package SSS::Definitions::Variable;
 
-use Mouse;
+use Moo;
 
 with qw(SSS::Definitions::Labelled);
 
@@ -13,7 +13,6 @@ The VARIABLE ID
 has 'id' =>
 (
   is       => 'ro',
-  isa      => 'Str',
   required => 1,
 );
 
@@ -26,7 +25,6 @@ The VARIABLE NAME
 has 'name' =>
 (
   is       => 'rw',
-  isa      => 'Str',
 );
 
 =item type
@@ -38,7 +36,6 @@ The VARIABLE TYPE
 has 'type' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item values
@@ -50,7 +47,6 @@ The VALUES as a flat array, in originally defined order.
 has 'values' =>
 (
   is      => 'ro',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 
@@ -63,7 +59,6 @@ The VALUES as a Hash, where the key is the value "id".
 has 'values_by_id' =>
 (
   is      => 'ro',
-  isa     => 'HashRef',
   default => sub { {} },
 );
 
@@ -76,7 +71,6 @@ The starting point of the variable.
 has 'position_start' =>
 (
   is  => 'rw',
-  isa => 'Int',
 );
 
 =item position_end
@@ -88,7 +82,6 @@ The end point of the variable.
 has 'position_end' =>
 (
   is  => 'rw',
-  isa => 'Int',
 );
 
 =item length
@@ -100,7 +93,6 @@ Length of the variable.
 has 'length' =>
 (
   is  => 'rw',
-  isa => 'Int',
 );
 
 =item size
@@ -112,7 +104,6 @@ Size of the character data.
 has 'size' =>
 (
   is  => 'rw',
-  isa => 'Int',
 );
 
 =item range_start
@@ -124,7 +115,6 @@ If set, the beginning of our implicit values.
 has 'range_start' =>
 (
   is  => 'rw',
-  isa => 'Num',
 );
 
 =item range_end
@@ -136,7 +126,6 @@ If set, the end of our implicit values.
 has 'range_end' =>
 (
   is  => 'rw',
-  isa => 'Num',
 );
 
 =item subfields
@@ -148,7 +137,6 @@ Number of subfields in a spread.
 has 'subfields' =>
 (
   is  => 'rw',
-  isa => 'Int',
 );
 
 =item subfield_width
@@ -159,9 +147,9 @@ Width of subfields.
 
 has 'subfield_width' =>
 (
-  is         => 'rw',
-  isa        => 'Int',
-  lazy_build => 1,
+  is      => 'rw',
+  lazy    => 1,
+  builder => 1,
 );
 
 sub _build_subfield_width
@@ -179,7 +167,6 @@ The variable use, SSS XML 1.2+ only.
 has 'use' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item format
@@ -191,7 +178,6 @@ The variable format, SSS XML 2.0+ only.
 has 'format' =>
 (
   is      => 'rw',
-  isa     => 'Str',
   default => 'numeric',
 );
 

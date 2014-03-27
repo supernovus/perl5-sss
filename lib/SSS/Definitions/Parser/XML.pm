@@ -1,7 +1,7 @@
 package SSS::Definitions::Parser::XML;
 
 use v5.10;
-use Mouse;
+use Moo;
 use Carp;
 use XML::LibXML;
 

@@ -39,9 +39,10 @@ Support creating definition and records files.
 package SSS;
 # ABSTRACT: A Triple-S Library
 
-our $VERSION = v13.0.0;
+our $VERSION = v14.0.0;
 
-use Mouse;
+use v5.12;
+use Moo;
 use Carp;
 
 use SSS::Definitions;
@@ -61,9 +62,7 @@ Provides the 'load_defs' and 'vars' methods directly via our SSS object.
 
 has 'defs' => 
 (
-  is         => 'ro',
-  isa        => 'SSS::Definitions',
-  lazy_build => 1,
+  is         => 'lazy',
   handles    => [ 'load_defs', 'vars' ],
 );
 
@@ -77,9 +76,7 @@ Provides the 'load_recs', 'records' and 'find_records' methods directly.
 
 has 'recs' => 
 (
-  is         => 'ro',
-  isa        => 'SSS::Records',
-  lazy_build => 1,
+  is         => 'lazy',
   handles    => [ 'load_recs', 'records', 'find_records' ],
 );
 
@@ -95,8 +92,6 @@ sub _build_recs
   return SSS::Records->new(parent=>$self);
 }
 
-__PACKAGE__->meta->make_immutable();
-
 =back
 
 =head1 TESTING
@@ -107,9 +102,9 @@ or run 'perl ./t/name-of-test.t' to run a single test.
 
 =head1 DEPENDENCIES
 
-Perl 5.10 or higher.
+Perl 5.12 or higher.
 
-Mouse
+Moo
 
 XML::LibXML
 

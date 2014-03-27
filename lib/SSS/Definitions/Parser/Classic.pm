@@ -1,7 +1,7 @@
 package SSS::Definitions::Parser::Classic;
 
 use v5.10;
-use Mouse;
+use Moo;
 use Carp;
 use Text::ParseWords;
 

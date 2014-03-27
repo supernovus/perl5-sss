@@ -1,6 +1,6 @@
 package SSS::Definitions::Labelled;
 
-use Mouse::Role;
+use Moo::Role;
 
 =item label
 
@@ -11,7 +11,6 @@ The default Value label. There may also be language-specific labels.
 has 'label' =>
 (
   is       => 'rw',
-  isa      => 'Str',
 );
 
 =item labels
@@ -23,7 +22,6 @@ Specialized labels. SSS XML 1.2+ only.
 has 'labels' =>
 (
   is      => 'ro',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 

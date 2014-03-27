@@ -1,6 +1,6 @@
 package SSS::Definitions::Variable::Label;
 
-use Mouse;
+use Moo;
 
 =item text
 
@@ -11,7 +11,6 @@ The string content of the label.
 has 'text' =>
 (
   is       => 'rw',
-  isa      => 'Str',
   required => 1,
 );
 
@@ -26,7 +25,6 @@ If undefined, defaults to a magic language called '_DEFAULT_'.
 has 'lang' =>
 (
   is      => 'rw',
-  isa     => 'Str',
   default => '_DEFAULT_',
 );
 
@@ -41,7 +39,6 @@ If undefined, defaults to a magic mode called '_DEFAULT_'.
 has 'mode' =>
 (
   is      => 'rw',
-  isa     => 'Str',
   default => '_DEFAULT_',
 );
 

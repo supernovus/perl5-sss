@@ -1,6 +1,6 @@
 package SSS::Records::Record::Field::Bitstring;
 
-use Mouse;
+use Moo;
 
 extends 'SSS::Records::Record::Field::Multiple';
 

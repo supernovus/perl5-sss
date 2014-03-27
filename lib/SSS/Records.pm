@@ -1,19 +1,17 @@
 package SSS::Records;
 
-use Mouse;
+use Moo;
 use Carp;
 
 has 'parent'  => 
 (
   is       => 'ro',
-  isa      => 'SSS',
   required => 1,
 );
 
 has 'records' => 
 (
   is      => 'ro',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 

@@ -1,13 +1,12 @@
 package SSS::Records::Record::Field::Singular;
 
-use Mouse;
+use Moo;
 
 extends 'SSS::Records::Record::Field';
 
 has 'value' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 sub get_value

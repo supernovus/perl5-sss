@@ -1,6 +1,6 @@
 package SSS::Definitions::Variable::Value;
 
-use Mouse;
+use Moo;
 
 with qw(SSS::Definitions::Labelled);
 
@@ -13,7 +13,6 @@ The Value value (aka the Value id.)
 has 'value' =>
 (
   is       => 'rw',
-  isa      => 'Str',
   required => 1,
 );
 
@@ -26,7 +25,6 @@ The Value score (optional, SSS XML 2.0+ only.)
 has 'score' =>
 (
   is  => 'rw',
-  isa => 'Num',
 );
 
 =item special
@@ -38,7 +36,6 @@ Used in SSS Classic 1.1 only, to mark "special" values.
 has 'special' =>
 (
   is      => 'rw',
-  isa     => 'Bool',
   default => 0,
 );
 

@@ -1,6 +1,6 @@
 package SSS::Definitions;
 
-use Mouse;
+use Moo;
 use Carp;
 
 with qw(SSS::Definitions::Labelled);
@@ -21,7 +21,6 @@ they were defined in the definition file(s).
 has 'vars' => 
 (
   is      => 'ro',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 
@@ -34,7 +33,6 @@ A Hash of the vars, indexed by their SSS NAME.
 has 'vars_by_name' => 
 (
   is       => 'ro',
-  isa      => 'HashRef',
   default  => sub { {} },
 );
 
@@ -47,7 +45,6 @@ A Hash of the vars, indexed by their SSS VARIABLE ID.
 has 'vars_by_id' =>
 (
   is        => 'ro',
-  isa       => 'HashRef',
   default   => sub { {} },
 );
 
@@ -60,7 +57,6 @@ The version of the Triple-S specification of the definition document.
 has 'sss_version' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item langs
@@ -72,7 +68,6 @@ The languages listed in the SSS tag. SSS XML 1.2+ only.
 has 'langs' =>
 (
   is      => 'rw',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 
@@ -85,7 +80,6 @@ The label modes listed in the SSS tag. SSS XML 2.0+ only.
 has 'modes' =>
 (
   is      => 'rw',
-  isa     => 'ArrayRef',
   default => sub { [] },
 );
 
@@ -98,7 +92,6 @@ The DATE field from the definitions, if set.
 has 'date' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item time
@@ -110,7 +103,6 @@ The TIME field from the definitions, if set.
 has 'time' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item origin
@@ -122,7 +114,6 @@ The ORIGIN field from the definitions, if set.
 has 'origin' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item user
@@ -134,7 +125,6 @@ The USER field from the definitions, if set.
 has 'user' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item survey_name
@@ -146,7 +136,6 @@ The SURVEY NAME field from the definitions, if set. SSS XML 1.2+ only.
 has 'survey_name' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item survey_version
@@ -158,7 +147,6 @@ The SURVEY VERSION field from the definitions, if set. SSS XML 1.2+ only.
 has 'survey_version' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item survey_title
@@ -185,7 +173,6 @@ The RECORD ID field from the definitions.
 has 'record_id' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item record_uri
@@ -204,7 +191,6 @@ YMMV.
 has 'record_uri' =>
 (
   is  => 'rw',
-  isa => 'Str',
 );
 
 =item record_format
@@ -216,7 +202,6 @@ The format of the record data file.
 has 'record_format' =>
 (
   is      => 'rw',
-  isa     => 'Str',
   default => 'fixed',
 );
 
@@ -229,7 +214,6 @@ If set, and > 0, we skip this many lines in the record file.
 has 'record_skip' =>
 (
   is      => 'rw',
-  isa     => 'Int',
   default => 0,
 );
 

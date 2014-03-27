@@ -1,7 +1,7 @@
 package SSS::Records::Parser::Fixed;
 
 use v5.10;
-use Mouse;
+use Moo;
 use Carp;
 
 use SSS::Records::Record;
